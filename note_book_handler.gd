@@ -9,9 +9,9 @@ class_name NoteBookHandler extends Control
 @onready var file_dialog: FileDialog = %file_dialog;
 
 var is_save_mode := false;
-
-
 var example_text := "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet."
+
+
 
 func _input(event: InputEvent) -> void:
 	if Input.is_key_pressed(KEY_ALT):
@@ -25,20 +25,20 @@ func _input(event: InputEvent) -> void:
 			text_edit.text_changed.emit();
 
 
-func calculate_labels():
+func calculate_labels() -> void:
 	var words := text_edit.text.split(" ");
 	
 	var left_lines := 0;
 	var right_lines := 0;
 	var current_line := "";
 	var use_right := false;
-	var left_text := ""
-	var right_text := ""
+	var left_text := "";
+	var right_text := "";
 
 	for word in words:
 		# check if current word fits to current line.
 		if len(current_line) + len(word) + 1 <= max_chars_per_line:
-			current_line += word + " "
+			current_line += word + " ";
 		else:
 			# start new line
 			if use_right:
@@ -48,7 +48,7 @@ func calculate_labels():
 				left_text += current_line.strip_edges() + "\n";
 				left_lines += 1;
 			
-			current_line = word + " "
+			current_line = word + " ";
 
 		# check if max_lines reached, if yes use the next label
 		if !use_right && left_lines >= max_lines:
@@ -66,7 +66,6 @@ func calculate_labels():
 	rtl_right.text = right_text;
 
 
-
 #region EventListener
 func _on_btn_load_pressed() -> void:
 	is_save_mode = false;
@@ -80,8 +79,6 @@ func _on_btn_save_pressed() -> void:
 
 func _on_text_edit_text_changed() -> void:
 	calculate_labels();
-#endregion
-
 
 func _on_file_dialog_file_selected(path: String) -> void:
 	var text_resource :TextResource;
@@ -93,13 +90,16 @@ func _on_file_dialog_file_selected(path: String) -> void:
 		text_resource = ResourceLoader.load(path) as TextResource;
 		text_edit.text = text_resource.content;
 		calculate_labels();
-	
+
+#endregion
 
 
-func _config_file_mode():
+#region helper
+func _config_file_mode() -> void:
 	file_dialog.access = FileDialog.ACCESS_RESOURCES;
 	file_dialog.filters = ["*.tres"];
 	file_dialog.file_mode = FileDialog.FILE_MODE_SAVE_FILE \
 								if is_save_mode \
 								else FileDialog.FILE_MODE_OPEN_FILE;
-	
+
+#endregion
