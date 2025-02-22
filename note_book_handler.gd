@@ -77,7 +77,9 @@ func _on_btn_save_pressed() -> void:
 	is_save_mode = true;
 	_config_file_mode();
 	file_dialog.show();
-	
+
+func _on_text_edit_text_changed() -> void:
+	calculate_labels();
 #endregion
 
 
@@ -101,7 +103,3 @@ func _config_file_mode():
 								if is_save_mode \
 								else FileDialog.FILE_MODE_OPEN_FILE;
 	
-
-
-func _on_text_edit_text_changed() -> void:
-	calculate_labels();
