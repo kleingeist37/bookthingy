@@ -8,7 +8,7 @@ class_name NoteBookHandler extends Control
 @onready var rtl_right: RichTextLabel = %rtl_right;
 @onready var file_dialog: FileDialog = %file_dialog;
 
-var isSaveMode := false;
+var is_save_mode := false;
 
 
 var example_text := "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet."
@@ -16,11 +16,11 @@ var example_text := "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, se
 func _input(event: InputEvent) -> void:
 	if Input.is_key_pressed(KEY_ALT):
 		
-		if Input.is_key_pressed(KEY_1):
+		if Input.is_key_pressed(KEY_1): #ALT + 1
 			text_edit.text = example_text;
 			text_edit.text_changed.emit();
 			
-		if Input.is_key_pressed(KEY_2):
+		if Input.is_key_pressed(KEY_2): #ALT + 2
 			text_edit.text += example_text;
 			text_edit.text_changed.emit();
 
@@ -42,11 +42,11 @@ func calculate_labels():
 		else:
 			# start new line
 			if use_right:
-				right_text += current_line.strip_edges() + "\n"
-				right_lines += 1
+				right_text += current_line.strip_edges() + "\n";
+				right_lines += 1;
 			else:
-				left_text += current_line.strip_edges() + "\n"
-				left_lines += 1
+				left_text += current_line.strip_edges() + "\n";
+				left_lines += 1;
 			
 			current_line = word + " "
 
@@ -58,23 +58,23 @@ func calculate_labels():
 	# if you want to set a new page, you'll need add the content to an array wich holds the TextResources, or something like this. 
 	if current_line.strip_edges():
 		if use_right:
-			right_text += current_line.strip_edges()
+			right_text += current_line.strip_edges();
 		else:
-			left_text += current_line.strip_edges()
+			left_text += current_line.strip_edges();
 
-	rtl_left.text = left_text
-	rtl_right.text = right_text
+	rtl_left.text = left_text;
+	rtl_right.text = right_text;
 
 
 
 #region EventListener
 func _on_btn_load_pressed() -> void:
-	isSaveMode = false;
+	is_save_mode = false;
 	_config_file_mode();
 	file_dialog.show();
 
 func _on_btn_save_pressed() -> void:
-	isSaveMode = true;
+	is_save_mode = true;
 	_config_file_mode();
 	file_dialog.show();
 	
@@ -83,7 +83,7 @@ func _on_btn_save_pressed() -> void:
 
 func _on_file_dialog_file_selected(path: String) -> void:
 	var text_resource :TextResource;
-	if isSaveMode:
+	if is_save_mode:
 		text_resource = TextResource.new();
 		text_resource.content = text_edit.text;
 		ResourceSaver.save(text_resource, path);
@@ -92,14 +92,13 @@ func _on_file_dialog_file_selected(path: String) -> void:
 		text_edit.text = text_resource.content;
 		calculate_labels();
 	
-	isSaveMode = false;
 
 
 func _config_file_mode():
 	file_dialog.access = FileDialog.ACCESS_RESOURCES;
 	file_dialog.filters = ["*.tres"];
 	file_dialog.file_mode = FileDialog.FILE_MODE_SAVE_FILE \
-								if isSaveMode \
+								if is_save_mode \
 								else FileDialog.FILE_MODE_OPEN_FILE;
 	
 
